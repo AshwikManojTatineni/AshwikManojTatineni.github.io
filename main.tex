@@ -1,0 +1,174 @@
+\documentclass[a4paper,10pt]{article}
+
+% Package setup
+\usepackage[left=0.5in, right=0.5in, top=0.5in, bottom=0.5in]{geometry}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{fontawesome5} % For icons, if supported. If not, remove package and icons.
+
+% Formatting sections
+\titleformat{\section}{
+  \vspace{-5pt}\scshape\raggedright\large
+}{}{0em}{}[\titlerule \vspace{-2pt}]
+
+% Custom commands
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-1pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-5pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-5pt}
+}
+
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+
+\renewcommand\labelitemi{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\begin{document}
+
+%----------HEADER----------
+\begin{center}
+    \textbf{\Huge \scshape Ashwik Manoj Tatineni} \\ \vspace{5pt}
+    \small 
+    \faPhone\ (917) 982-3854 $|$ 
+    \faLinkedin\ \href{https://linkedin.com/in/ashwik-manoj-tatineni}{linkedin.com/in/ashwik-manoj-tatineni} $|$ 
+    \faEnvelope\ \href{mailto:at6287@nyu.edu}{at6287@nyu.edu} \\
+    Brooklyn, NY, United States
+\end{center}
+
+
+%-----------EDUCATION-----------
+\section{Education}
+  \begin{itemize}[leftmargin=0.15in, label={}]
+    \resumeSubheading
+      {New York University}{Brooklyn, NY}
+      {Master of Science: Mechatronics and Robotics; GPA: 3.5/4.0}{May 2026}
+    \resumeSubheading
+      {SRM University}{Chennai, India}
+      {Bachelor of Technology: Mechatronics Engineering with specialization in Robotics; CGPA: 8.68/10}{July 2024}
+  \end{itemize}
+
+
+%-----------PROJECTS-----------
+\section{Projects}
+  \begin{itemize}[leftmargin=0.15in, label={}]
+  
+    \resumeProjectHeading
+      {\textbf{Virtual Force Measurement \& Adaptive Control}}{November 2025 -- December 2025}
+      \begin{itemize}
+        \resumeItem{Architected a high-fidelity Gazebo simulation environment integrated with a virtual end-effector force/torque sensor, enabling the extraction of real-time \texttt{WrenchStamped} data via ROS/MATLAB for contact analysis.}
+        \resumeItem{Developed a closed-loop adaptive controller that modulates manipulator velocity and grasp strategy based on real-time force feedback, utilizing dynamic thresholds to prevent safety violations during object hand-offs.}
+        \resumeItem{Engineered a data logging pipeline to evaluate grasp stability by computing peak force, standard deviation, and contact duration, optimizing the trade-off between operation speed and safety compliance.}
+      \end{itemize}
+      
+    \resumeProjectHeading
+      {\textbf{Autonomous Visual Navigation Robot}}{October -- December 2025}
+      \begin{itemize}
+        \resumeItem{Engineered a mapless navigation pipeline using a pre-trained ResNet50 backbone to extract 2048-dimensional global features, constructing a sparse weighted topological graph ($G(V,E,W)$) from 3,751 exploration images.}
+        \resumeItem{Implemented an A* search algorithm for optimal path planning on the topological graph, integrated with a Ball Tree data structure to perform fast ($O(\log N)$) nearest-neighbor queries for real-time visual localization.}
+        \resumeItem{Developed a dynamic navigation loop capable of "stuck detection" by monitoring feature variance across frames, triggering online replanning to handle perceptual aliasing and recover from localization failures.}  
+      \end{itemize}
+
+      \resumeProjectHeading
+      {\textbf{Quadruped Locomotion via Reinforcement Learning}}{November -- December 2025}
+      \begin{itemize}
+        \resumeItem{Developed a robust locomotion policy for a Unitree Go2 robot in Isaac Lab, progressively optimizing a Reinforcement Learning agent from a baseline velocity tracker to a stable gait using action-rate regularization.}
+        \resumeItem{Implemented an explicit PD torque controller ($K_p=20, K_d=0.5$) and integrated Raibert heuristics with gait clock logic to enforce physically consistent foot placement and eliminate crawling artifacts.}
+        \resumeItem{Engineered domain randomization techniques by introducing stochastic actuator friction (static and viscous) during training resets, significantly reducing policy jitter and enhancing robustness against dynamic uncertainties.}
+      \end{itemize}
+
+      
+    \resumeProjectHeading
+      {\textbf{Movement Tracking Parallel Manipulator for Gait Rehabilitation}}{February 2025 -- May 2025}
+      \begin{itemize}
+        \resumeItem{Led the computer vision pipeline for a dual-system setup involving a 3-RPS parallel manipulator on a gantry, enabling real-time tracking and gait motion control via a blue-object-based target.}
+        \resumeItem{Designed and integrated a custom blue target box housing an IMU to place on top of the hybrid platform.}
+        \resumeItem{Implemented pixel-to-world mapping and depth estimation using the pinhole model.}
+      \end{itemize}
+
+    \resumeProjectHeading
+      {\textbf{LeRobot Hackathon -- Sandwich Making Bot}}{April 2025}
+      \begin{itemize}
+        \resumeItem{Assembled LeRobot S-100 Arm and recorded the data of 100 episodes per task.}
+        \resumeItem{Implemented ACT policy to train sequential tasks with the recorded data.}
+        \resumeItem{Gained exposure to other VLA policies like $\pi_0$ and Nvidia Groot N1.5.}
+      \end{itemize}
+
+    \resumeProjectHeading
+      {\textbf{2-Axis Tracking System Using Deep Learning}}{November 2023 -- April 2024}
+      \begin{itemize}
+        \resumeItem{Developed a 2-axis object tracking system capable of detecting up to 80 distinct classes and tracking a single object in real time based on user input.}
+        \resumeItem{Designed an interface to acquire images via the MVS SDK and implemented YOLOv8 for object detection with DeepSORT for object tracking.}
+        \resumeItem{Enabled user-driven mouse input to dynamically adjust motor control, keeping the target centered in the frame.}
+      \end{itemize}
+
+    \resumeProjectHeading
+      {\textbf{Autonomous Indoor Navigation for a Holonomic Robot}}{August 2023 -- October 2023}
+      \begin{itemize}
+        \resumeItem{Developed a holonomic autonomous robot capable of reaching designated positions via path points generated from stereo camera data using PRM.}
+        \resumeItem{Derived and validated kinematic model to facilitate accurate path planning and movement using Dead-Reckoning.}
+      \end{itemize}
+      
+  \end{itemize}
+
+
+%-----------TECHNICAL SKILLS-----------
+\section{Technical Skills}
+ \begin{itemize}[leftmargin=0.15in, label={}]
+    \small{\item{
+     \textbf{Programming}{: Python, C, Embedded C, C++, PLC, Assembly language} \\
+     \textbf{Software}{: MATLAB, Simulink, ROS, Gazebo, Isaac Sim, SolidWorks, FluidSIM, LabVIEW, ANSYS} \\
+     \textbf{Fabrication}{: Design, Machining, Assembly, CNC Milling and Machining, 3D printing}
+    }}
+ \end{itemize}
+
+
+%-----------EXPERIENCE-----------
+\section{Experience}
+  \begin{itemize}[leftmargin=0.15in, label={}]
+
+    \resumeSubheading
+      {MAE Department Course Assistant (ROB-UY-3404 / ROB-GY 6423)}{September 2025 -- Present}
+      {New York University}{Brooklyn, NY}
+      \begin{itemize}
+        \resumeItem{Guided students through MATLAB \& Simulink simulations of Two-Channel Telerobotic Architecture for Position and Velocity Tracking.}
+        \resumeItem{Currently providing academic support on the Course Project and Assignments.}
+      \end{itemize}
+
+    \resumeSubheading
+      {Graduate Researcher}{January 2025 -- Present}
+      {MERIIT Lab}{Brooklyn, NY}
+      \begin{itemize}
+        \resumeItem{Fabricated a Multi-Modal Sock for CIPN Rehabilitation.}
+        \resumeItem{Developed a custom Capacitive Pressure Sensor Array for Gait Analysis.}
+        \resumeItem{Developed an algorithm to control the torque of 3-Axis Exoskeleton for Neuromuscular Wrist Rehabilitation with EPOS4 Module and integrated safety limits across each axis.}
+        \resumeItem{Calibrated and programmed the data acquisition of the sensors on the Haptic Glove.}
+        \resumeItem{Developing an immersive VR environment using Meta SDK and Unity with real-time sensor integration, bridging physical hardware signals and responsive virtual interfaces.}
+      \end{itemize}
+
+    \resumeSubheading
+      {Research Intern}{July 2023 -- August 2023}
+      {Motion Analysis Lab (Motion Control of Vertical Stacking Mobile Robot)}{Chennai, India}
+      \begin{itemize}
+        \resumeItem{Designed and assembled a differential wheeled robot with a pneumatic piston base and conveyor for Vertical Stacking.}
+        \resumeItem{Built a line-following robot utilizing PID control to ensure stable and precise path-following capabilities.}
+      \end{itemize}
+
+  \end{itemize}
+
+\end{document}

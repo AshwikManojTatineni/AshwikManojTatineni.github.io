@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ashwik Manoj Tatineni — Robotics Portfolio</title>
+  <meta name="description"
+    content="Interactive 3D portfolio showcasing projects in Perception, Mechatronics, Controls, Robot Rehabilitation, and Embodied AI." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body data-state="home">
+  <!-- Three.js Canvas -->
+  <canvas id="three-canvas"></canvas>
+
+  <!-- ─── UI Overlay ─────────────────────────────────────── -->
+  <div id="app">
+
+    <!-- ═══ TOP FILTER BAR ═══ -->
+    <header id="filter-bar" class="filter-bar hidden">
+      <div class="filter-controls">
+        <input type="text" id="project-search" placeholder="Search projects or skills..." class="search-input" />
+        <div class="filter-buttons" id="filter-buttons">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="perception">Perception</button>
+          <button class="filter-btn" data-filter="controls">Controls</button>
+          <button class="filter-btn" data-filter="mechatronics">Mechatronics</button>
+          <button class="filter-btn" data-filter="rehab">Rehab / Wearable</button>
+          <button class="filter-btn" data-filter="embodiedai">Embodied AI</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ═══ HOME TEXT OVERLAY ═══ -->
+    <section id="home-overlay" class="scroll-element">
+      <div class="home-layout">
+        <!-- Left: info column -->
+        <div class="home-info">
+          <p class="home-label">MECHATRONICS &amp; ROBOTICS ENGINEER</p>
+          <p class="home-about">
+            M.S. Candidate @ NYU — building intelligent machines
+            at the intersection of perception, control, and embodied AI.
+          </p>
+          <div class="home-contact">
+            <a href="mailto:at6287@nyu.edu" class="contact-link">at6287@nyu.edu</a>
+            <a href="https://linkedin.com/in/ashwik-manoj-tatineni" target="_blank" class="contact-link">LinkedIn ↗</a>
+          </div>
+          <div class="home-enter-hint">
+            <span class="hint-pulse"></span>
+            SCROLL DOWN TO EXPLORE
+          </div>
+        </div>
+
+        <!-- Right: bold name -->
+        <div class="home-name">
+          <div class="name-vertical">
+            <span class="name-first">ASHWIK</span>
+            <span class="name-last">TATINENI</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ DETAIL MODAL ═══ -->
+    <div id="detail-modal" class="detail-modal hidden">
+      <div class="modal-backdrop" id="modal-backdrop"></div>
+      <div class="modal-content">
+        <button id="close-modal" class="close-modal">✕</button>
+        <div id="modal-body"></div>
+      </div>
+    </div>
+
+    <!-- Footer (always visible, subtle) -->
+    <footer id="footer">
+      <div class="footer-inner">
+        <span>© 2026 Ashwik Manoj Tatineni</span>
+        <span class="footer-dot">·</span>
+        <a href="mailto:at6287@nyu.edu">at6287@nyu.edu</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Object label tooltip -->
+  <div class="object-label" id="object-label"></div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/",
+      "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.5/index.js"
+    }
+  }
+  </script>
+  <script type="module" src="js/app.js"></script>
+</body>
+
+</html>

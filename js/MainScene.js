@@ -154,6 +154,8 @@ export class MainScene {
     }
 
     _initJourneyWindows() {
+        this.infoPlanes = []; // Store planes for scroll pop-up animation
+
         // Experience and Education combined and sorted latest first
         const timeline = [
             { type: 'edu', ...EDUCATION[0] }, // NYU (2026)
@@ -163,40 +165,193 @@ export class MainScene {
             { type: 'exp', ...EXPERIENCE[2] }, // Intern (2023)
         ];
 
-        const windowMat = new THREE.MeshStandardMaterial({
+        const eduPanels = {
+            'New York University': {
+                logo: 'asserts/logos/nyu_tandon.png',
+                color: '#7B68EE',
+                glow: '#9370DB',
+                degree: 'MS in Mechatronics & Robotics',
+                focus: 'Wearables · Embodied AI',
+                gpa: '3.6 / 4.0',
+                year: 'May 2026',
+            },
+            'SRM University': {
+                logo: 'asserts/logos/srm_university.png',
+                color: '#FFD700',
+                glow: '#FFC107',
+                degree: 'BTech in Mechatronics & Robotics',
+                focus: 'Controls · Perception',
+                gpa: '8.68 / 10',
+                year: 'July 2024',
+            },
+        };
+
+        const textureLoader = new THREE.TextureLoader();
+
+        const expWindowMat = new THREE.MeshStandardMaterial({
             color: '#a0ffd0', emissive: '#30ff80', emissiveIntensity: 0.35,
             transparent: true, opacity: 0.35, roughness: 0.9, side: THREE.DoubleSide
         });
 
+        // Helper function for wrapping text on canvas
+        const wrapText = (ctx, text, x, y, maxWidth, lineHeight) => {
+            const words = text.split(' ');
+            let line = '';
+            let currY = y;
+            for(let n = 0; n < words.length; n++) {
+                const testLine = line + words[n] + ' ';
+                const metrics = ctx.measureText(testLine);
+                const testWidth = metrics.width;
+                if (testWidth > maxWidth && n > 0) {
+                    ctx.fillText(line, x, currY);
+                    line = words[n] + ' ';
+                    currY += lineHeight;
+                } else {
+                    line = testLine;
+                }
+            }
+            ctx.fillText(line, x, currY);
+            return currY + lineHeight;
+        };
+
         timeline.forEach((item, i) => {
-            const z = -4 - (i * 3.5);
-            // Alternate left and right walls
+            const z = -8 - (i * 2.8);
             const isLeft = i % 2 === 0;
             const sign = isLeft ? -1 : 1;
 
             const group = new THREE.Group();
-            // Data for the modal when clicked
             group.userData = { type: 'journey', data: item };
 
-            // Pane
-            const paneGeo = new THREE.PlaneGeometry(2.2, 1.8);
-            const pane = new THREE.Mesh(paneGeo, windowMat);
-            pane.rotation.y = sign * (Math.PI / 2);
-            // Slightly offset from the wall (wall is at +/- 5)
-            pane.position.set(sign * 4.95, 2.5, 0);
-            
-            // Re-map userData onto pane for raycaster
-            pane.userData = { type: 'journey', data: item, label: (item.school || item.org) };
-            group.add(pane);
+            // --- INFO TEXT PANEL (canvas texture) FOR ALL ---
+            const infoCanvas = document.createElement('canvas');
+            let infoTex; // Hoisted for async image loading
+            infoCanvas.width = 1024;
+            infoCanvas.height = 800;
+            const ctx = infoCanvas.getContext('2d');
 
-            // Light spill
-            const light = new THREE.PointLight('#40ffa0', 1.5, 6);
-            light.position.set(sign * 4.5, 2.5, 0);
-            group.add(light);
+            // Dark semi-transparent background
+            ctx.fillStyle = 'rgba(6, 10, 9, 0.85)';
+            ctx.roundRect(0, 0, 1024, 800, 16);
+            ctx.fill();
+
+            // Top accent line
+            ctx.fillStyle = '#ff6a00'; // Orange accent
+            ctx.fillRect(40, 20, 200, 3);
+
+            // Orange Heading
+            ctx.fillStyle = '#ff6a00';
+            ctx.font = 'bold 48px Inter, sans-serif';
+            
+            // White Text Details
+            const whiteStyle = '#ffffff';
+            const whiteFont = '600 36px Inter, sans-serif';
+
+            let currentY = 350; // Starting Y for bullets
+
+            if (item.type === 'edu') {
+                const config = eduPanels[item.school];
+                if (!config) return;
+
+                // --- LOGO (Drawn directly onto canvas to prevent flickering) ---
+                const img = new Image();
+                img.onload = () => {
+                    // Draw logo at top right corner
+                    ctx.drawImage(img, 780, 40, 200, 200);
+                    if (infoTex) infoTex.needsUpdate = true;
+                };
+                img.src = config.logo;
+
+                // Edu Info Canvas Draw
+                ctx.fillText(item.school, 40, 90); // Orange Heading
+                ctx.fillStyle = whiteStyle;
+                ctx.font = whiteFont;
+                ctx.fillText(config.degree, 40, 150); // White Text
+                
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+                ctx.fillRect(40, 180, 944, 1); // Divider
+
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                ctx.font = '500 30px Inter, sans-serif';
+                ctx.fillText(`Focus: ${config.focus}`, 40, 240);
+                ctx.fillText(`GPA: ${config.gpa} | Grad: ${config.year}`, 40, 290);
+
+                // Colored glow light matching the university
+                const light = new THREE.PointLight(config.glow, 2.5, 8);
+                light.position.set(sign * 4.2, 2.5, 0);
+                group.add(light);
+
+                // Subtle accent strip on wall edge
+                const stripGeo = new THREE.PlaneGeometry(0.04, 3.5);
+                const stripMat = new THREE.MeshBasicMaterial({ color: config.color, transparent: true, opacity: 0.6 });
+                const strip = new THREE.Mesh(stripGeo, stripMat);
+                strip.rotation.y = -sign * (Math.PI / 2);
+                strip.position.set(sign * 4.98, 2.2, 0);
+                group.add(strip);
+
+            } else {
+                // --- EXP BASE PANE ---
+                const paneGeo = new THREE.PlaneGeometry(2.2, 1.8);
+                const pane = new THREE.Mesh(paneGeo, expWindowMat);
+                pane.rotation.y = -sign * (Math.PI / 2);
+                pane.position.set(sign * 4.95, 2.5, 0);
+                pane.userData = { type: 'journey', data: item, label: (item.school || item.org) };
+                group.add(pane);
+
+                const light = new THREE.PointLight('#40ffa0', 1.5, 6);
+                light.position.set(sign * 4.5, 2.5, 0);
+                group.add(light);
+
+                this.clickables.push(pane);
+
+                // Exp Info Canvas Draw
+                ctx.fillText(item.org, 40, 90); // Orange Heading
+                ctx.fillStyle = whiteStyle;
+                ctx.font = whiteFont;
+                ctx.fillText(item.title, 40, 150); // White Text
+                
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+                ctx.fillRect(40, 180, 944, 1); // Divider
+
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                ctx.font = '500 30px Inter, sans-serif';
+                ctx.fillText(`Date: ${item.date}`, 40, 240);
+                ctx.fillText(`Location: ${item.location}`, 40, 290);
+            }
+
+            // Draw Bullets for both Edu and Exp
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '400 24px Inter, sans-serif';
+            if (item.bullets && item.bullets.length > 0) {
+                item.bullets.forEach(bullet => {
+                    ctx.fillText('•', 40, currentY);
+                    currentY = wrapText(ctx, bullet, 70, currentY, 900, 34);
+                    currentY += 10; // Extra spacing between bullets
+                });
+            }
+
+            // --- ADD INFO PLANE TO SCENE ---
+            infoTex = new THREE.CanvasTexture(infoCanvas);
+            infoTex.colorSpace = THREE.SRGBColorSpace;
+            const infoPlaneGeo = new THREE.PlaneGeometry(2.8, 2.1875); // Scaled for 1024x800 aspect ratio
+            const infoMat = new THREE.MeshBasicMaterial({
+                map: infoTex,
+                transparent: true,
+                side: THREE.DoubleSide,
+                opacity: 0 // start hidden, updated on scroll
+            });
+            const infoPlane = new THREE.Mesh(infoPlaneGeo, infoMat);
+            infoPlane.rotation.y = -sign * (Math.PI / 2);
+            infoPlane.position.set(sign * 4.93, 1.3, 0);
+            
+            // Save z and sign for scroll animation logic
+            infoPlane.userData = { type: 'journey', data: item, label: item.school || item.org, z: z, sign: sign };
+            
+            group.add(infoPlane);
+            this.clickables.push(infoPlane);
+            this.infoPlanes.push(infoPlane);
 
             group.position.set(0, 0, z);
             this.scene.add(group);
-            this.clickables.push(pane); // Add to interactive list
         });
     }
 
@@ -281,26 +436,32 @@ export class MainScene {
 
             // Emissive glowing ring atop the pedestal
             const ringGeo = new THREE.TorusGeometry(0.65, 0.02, 8, 32);
-            const ringMat = new THREE.MeshBasicMaterial({ color: color });
+            const defaultColor = '#30ff80'; // Default green glow
+            const ringMat = new THREE.MeshBasicMaterial({ color: defaultColor });
             const ring = new THREE.Mesh(ringGeo, ringMat);
             ring.position.y = 0.45;
             ring.rotation.x = Math.PI / 2;
             group.add(ring);
             
             // Ambient glow for the project stand
-            const light = new THREE.PointLight(color, 1.5, 4);
+            const light = new THREE.PointLight(defaultColor, 1.5, 4);
             light.position.y = 1.0;
             group.add(light);
+            
+            // Save references for dynamic filtering color changes
+            proj.ringMat = ringMat;
+            proj.light = light;
+            proj.themeColor = color;
 
             // Floating object / card wrapper
             const floatGroup = new THREE.Group();
             floatGroup.position.set(0, 1.4, 0);
 
-            // A sleek tech-cube
-            const cubeGeo = new THREE.BoxGeometry(0.8, 0.8, 0.8);
+            // A white pearl (adjusted for dark environment)
+            const cubeGeo = new THREE.SphereGeometry(0.45, 32, 32);
             const cubeMat = new THREE.MeshStandardMaterial({ 
-                color: '#222', metalness: 0.6, roughness: 0.2,
-                emissive: color, emissiveIntensity: 0.25
+                color: '#ffffff', metalness: 0.2, roughness: 0.1,
+                emissive: '#ffffff', emissiveIntensity: 0.3
             });
             const floatObj = new THREE.Mesh(cubeGeo, cubeMat);
             
@@ -376,6 +537,13 @@ export class MainScene {
                 // Set explicitly for now. A tween engine could smooth this.
                 proj.sceneGroup.position.set(x, 0, z);
                 
+                // Update glowing ring and light based on filter state
+                const targetColor = (domain === 'all' && query === '') ? '#30ff80' : proj.themeColor;
+                if (proj.ringMat && proj.light) {
+                    proj.ringMat.color.set(targetColor);
+                    proj.light.color.set(targetColor);
+                }
+                
                 activeIndex++;
             } else {
                 proj.sceneGroup.visible = false;
@@ -411,6 +579,38 @@ export class MainScene {
         } else {
             this.doorLeftHinge.rotation.y = 0;
             this.doorRightHinge.rotation.y = 0;
+        }
+
+        // Info Planes Animation (pop-up on scroll)
+        if (this.infoPlanes) {
+            this.infoPlanes.forEach(plane => {
+                const dist = currentScrollZ - plane.userData.z;
+                
+                // We want it to pop out when camera is approaching (dist is positive) and right next to it
+                // Range: starts popping out at dist=10, peaks at dist=4, fades out by dist=-2
+                let popProgress = 0;
+                if (dist > -2 && dist < 12) {
+                    const peakDist = 4;
+                    const spread = dist > peakDist ? 8 : 6; // wider approach, quicker fade as you pass
+                    popProgress = Math.max(0, 1 - Math.abs(dist - peakDist) / spread);
+                }
+                
+                // Smooth easing
+                const eased = 1 - Math.pow(1 - popProgress, 3);
+                
+                // Scale (0.8 -> 1.3 for better legibility of bullets)
+                const targetScale = 0.8 + 0.5 * eased;
+                plane.scale.set(targetScale, targetScale, targetScale);
+                
+                // Position X (pops out from wall towards center)
+                const sign = plane.userData.sign;
+                // Move 1.5 units inward to hover nicely in front of the viewer
+                const targetX = sign * (4.93 - 1.5 * eased); 
+                plane.position.x = targetX;
+                
+                // Opacity (0 -> 1)
+                plane.material.opacity = eased;
+            });
         }
 
         // Maglev Project animations

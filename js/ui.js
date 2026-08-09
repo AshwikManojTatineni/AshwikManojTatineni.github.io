@@ -58,11 +58,29 @@ export class UI {
             const bulletsHTML = data.bullets.map((b) => `<li>${b}</li>`).join('');
             const tagsHTML = data.tags.map((t) => `<span class="modal-tag">${t}</span>`).join('');
             
+            // Build media HTML
+            let mediaHTML = '';
+            if (data.media && data.media.length > 0) {
+                const mediaItems = data.media.map(src => {
+                    const ext = src.split('.').pop().toLowerCase();
+                    if (ext === 'mp4' || ext === 'mov') {
+                        return `<video class="modal-media" src="${src}" controls loop muted playsinline preload="metadata"></video>`;
+                    } else if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) {
+                        return `<img class="modal-media" src="${src}" alt="Project Media" loading="lazy" />`;
+                    } else if (ext === 'pdf') {
+                        return `<a href="${src}" target="_blank" class="modal-pdf-link">📄 View Documentation (PDF)</a>`;
+                    }
+                    return '';
+                }).join('');
+                mediaHTML = `<div class="modal-media-grid">${mediaItems}</div>`;
+            }
+
             html = `
                 <h2 class="modal-title">${data.title}</h2>
                 <span class="modal-date">${data.date}</span>
                 <ul class="modal-bullets">${bulletsHTML}</ul>
                 <div class="modal-tags">${tagsHTML}</div>
+                ${mediaHTML}
             `;
         } else if (type === 'journey') {
             const title = data.school || data.org;

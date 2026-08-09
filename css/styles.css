@@ -458,6 +458,51 @@ body {
   background: rgba(255, 255, 255, 0.04);
 }
 
+/* ─── Modal Media ────────────────────────────────────────────── */
+.modal-media-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.modal-media {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.3);
+  object-fit: cover;
+}
+
+video.modal-media {
+  max-height: 400px;
+  object-fit: contain;
+  background: #000;
+}
+
+.modal-pdf-link {
+  display: inline-block;
+  padding: 10px 20px;
+  background: rgba(255, 62, 29, 0.1);
+  border: 1px solid rgba(255, 62, 29, 0.3);
+  color: #fff;
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-radius: 6px;
+  transition: all 0.25s;
+}
+
+.modal-pdf-link:hover {
+  background: rgba(255, 62, 29, 0.25);
+  border-color: rgba(255, 62, 29, 0.6);
+  transform: translateY(-2px);
+}
+
 /* ─── Footer ─────────────────────────────────────────────────── */
 #footer {
   position: fixed;

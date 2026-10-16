@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<meta name="color-scheme" content="light dark">
+<title>HDOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,500..800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="top">
+  <button class="brand" id="home" type="button" aria-label="HDOS, back to the patients">HDOS</button>
+  <span class="grow"></span>
+  <button class="ghost" id="new" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>Patients</button>
+</header>
+
+<main id="main">
+  <section class="hero" id="hero">
+    <span class="badge">Recorded cases</span>
+    <h1>What's going on?</h1>
+    <p class="lead">Follow a diagnostic work-up one step at a time: the readings broken down, what is confirmed, what is still open, and the next test to run.</p>
+    <div class="cases" id="cases" role="list"></div>
+    <p class="note">Fictional patients. Decision support for a clinician, not medical advice.</p>
+  </section>
+  <div id="thread" aria-live="polite"></div>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
